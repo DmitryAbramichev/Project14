@@ -1,8 +1,5 @@
 import { Card, Text, Badge, Button, Flex, Group } from '@mantine/core';
 import { type Vacancy } from '../../store/types';
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
-import { fetchVacancies } from '../../store/ vacanciesSlice';
 
 export function VacancyCard({ vacancy }: { vacancy: Vacancy }) {
   const salary = vacancy.salary
@@ -16,13 +13,6 @@ export function VacancyCard({ vacancy }: { vacancy: Vacancy }) {
   };
   const scheduleText = vacancy.schedule ? scheduleMap[vacancy.schedule.id] || vacancy.schedule.name : '';
 
-
-  const dispatch = useAppDispatch();
-const filters = useAppSelector((state) => state.filters);
-
-useEffect(() => {
-  dispatch(fetchVacancies());
-}, [filters, dispatch]);
   return (
     <Card withBorder shadow="sm" padding="lg" radius="md">
       <Group justify="space-between" mb="xs">

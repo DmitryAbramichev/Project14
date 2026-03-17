@@ -14,22 +14,32 @@ export const fetchVacancies = createAsyncThunk<
   void,
   { state: RootState }
 >('vacancies/fetchVacancies', async (_, { getState }) => {
+
   const { filters } = getState();
+
   const params = new URLSearchParams({
     page: String(filters.page),
     per_page: '10',
-    industry: '7',
-    professional_role: '96',
   });
+
   if (filters.search) {
-      params.append('text', filters.search);
-         }
+    params.append('text', filters.search);
+  }
 
-    if (filters.city !== 'all') {
-      params.append('area', filters.city);
-    }
+  if (filters.city !== 'all') {
+    params.append('area', filters.city);
+  }
 
-  const res = await fetch(`https://api.hh.ru/vacancies?${params}`);
+  if (filters.skills.length > 0) {
+    filters.skills.forEach((skill) =>{
+       params.append('skill_set', skill);
+    })
+   
+  }
+
+  const res = await fetch(`https://api.hh.ru/vacancies?${params}`, {
+  });
+  
   if (!res.ok) throw new Error('Ошибка загрузки');
   return res.json();
 });
