@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { AppShell, Flex, Text, Pagination, Loader, Alert } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
-import { fetchVacancies } from '../../store/ vacanciesSlice'; // убрал пробелы
-import { setPage } from '../../store/ filtersSlice';           // убрал пробелы
+import { fetchVacancies } from '../../store/ vacanciesSlice';
+import { setPage, setSearch, setCity, setSkillsArray } from '../../store/ filtersSlice';
 import { CitySelect } from '../CitySelect/CitySelect';
 import { SkillsInput } from '../SkillsInput/SkillsInput';
 import { VacancyCard } from '../VacancyCard/VacancyCard';
@@ -10,12 +11,70 @@ import { SearchBar } from '../SearchBar/SearchBar';
 
 export function Main() {
   const dispatch = useAppDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isInitialized = useRef(false);
+  const isUpdatingFromUrl = useRef(false);
 
   const { items, loading, error, totalPages } = useAppSelector(state => state.vacancies);
   const filters = useAppSelector(state => state.filters);
-
   const page = filters.page;
 
+  // 1. Чтение URL → обновление Redux (только если параметр присутствует)
+  useEffect(() => {
+    if (isUpdatingFromUrl.current) return;
+    isUpdatingFromUrl.current = true;
+
+    // поиск
+    const searchParam = searchParams.get('search');
+    if (searchParam !== null && searchParam !== filters.search) {
+      dispatch(setSearch(searchParam));
+    }
+
+    // город
+    const cityParam = searchParams.get('city');
+    if (cityParam !== null) {
+      let city: 'all' | '1' | '2' = 'all';
+      if (cityParam === '1' || cityParam === '2') city = cityParam;
+      if (city !== filters.city) dispatch(setCity(city));
+    }
+
+    // навыки
+    const skillsParam = searchParams.get('skills');
+    if (skillsParam !== null) {
+      const skills = skillsParam.split(',').filter(Boolean);
+      if (JSON.stringify(skills) !== JSON.stringify(filters.skills)) {
+        dispatch(setSkillsArray(skills));
+      }
+    }
+
+    // страница
+    const pageParam = searchParams.get('page');
+    if (pageParam !== null) {
+      const pageNum = Number(pageParam) - 1;
+      if (pageNum !== filters.page) dispatch(setPage(pageNum));
+    }
+
+    isUpdatingFromUrl.current = false;
+    isInitialized.current = true;
+  }, [searchParams]);
+
+  // 2. Запись Redux → URL
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    if (isUpdatingFromUrl.current) return;
+    isUpdatingFromUrl.current = true;
+
+    const params = new URLSearchParams();
+    if (filters.search) params.set('search', filters.search);
+    if (filters.city !== 'all') params.set('city', filters.city);
+    if (filters.skills.length) params.set('skills', filters.skills.join(','));
+    if (filters.page > 0) params.set('page', String(filters.page + 1));
+
+    setSearchParams(params, { replace: true });
+    isUpdatingFromUrl.current = false;
+  }, [filters.search, filters.city, filters.skills, filters.page, setSearchParams]);
+
+  // Загрузка вакансий при изменении фильтров
   useEffect(() => {
     dispatch(fetchVacancies());
   }, [filters, dispatch]);

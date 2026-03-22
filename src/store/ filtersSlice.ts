@@ -29,18 +29,25 @@ const filtersSlice = createSlice({
       state.city = action.payload;
       state.page = 0;
     },
+    // Добавляем навык
     addSkill: (state, action: PayloadAction<string>) => {
       if (!state.skills.includes(action.payload)) {
         state.skills.push(action.payload);
         state.page = 0;
       }
     },
+    // Удаляем навык
     removeSkill: (state, action: PayloadAction<string>) => {
       state.skills = state.skills.filter(s => s !== action.payload);
+      state.page = 0;
+    },
+    // Устанавливаем массив навыков целиком (для синхронизации с URL)
+    setSkillsArray: (state, action: PayloadAction<string[]>) => {
+      state.skills = action.payload;
       state.page = 0;
     },
   },
 });
 
-export const { setPage, setSearch, setCity, addSkill, removeSkill } = filtersSlice.actions;
+export const { setPage, setSearch, setCity, addSkill, removeSkill, setSkillsArray } = filtersSlice.actions;
 export default filtersSlice.reducer;
