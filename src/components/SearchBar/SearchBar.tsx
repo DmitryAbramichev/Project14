@@ -1,6 +1,6 @@
 import { TextInput, Button, Flex } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
-import { setSearch } from '../../store/ filtersSlice';
+import { setSearch } from '../../store/filtersSlice';
 import { useState } from 'react';
 
 export const SearchBar = () => {

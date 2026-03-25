@@ -2,7 +2,7 @@ import { useState, type KeyboardEvent } from 'react';
 import { Flex, Pill, TextInput, ActionIcon, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
-import { addSkill, removeSkill } from '../../store/ filtersSlice.ts';
+import { addSkill, removeSkill } from '../../store/filtersSlice'; // правильный путь
 
 export function SkillsInput() {
   const dispatch = useAppDispatch();
@@ -28,7 +28,6 @@ export function SkillsInput() {
     <div>
       <Text>Ключевые навыки</Text>
       <Flex gap="xs" align="center">
-        
         <TextInput
           placeholder="Навык"
           value={value}
@@ -40,7 +39,7 @@ export function SkillsInput() {
           <IconPlus size={16} />
         </ActionIcon>
       </Flex>
-            <Flex gap="xs" wrap="wrap" mb="sm">
+      <Flex gap="xs" wrap="wrap" mb="sm">
         {skills.map((skill: string) => (
           <Pill
             key={skill}

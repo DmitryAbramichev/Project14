@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import filtersReducer from './ filtersSlice.ts';
-import vacanciesReducer from './ vacanciesSlice.ts';
+import filtersReducer from './filtersSlice';
+import vacanciesReducer from './vacanciesSlice';
 
 
 export const store = configureStore({

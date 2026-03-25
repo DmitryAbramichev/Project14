@@ -1,6 +1,6 @@
 import { Select } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
-import { setCity } from '../../store/ filtersSlice.ts';
+import { setCity } from '../../store/filtersSlice.ts';
 
 export function CitySelect() {
   const dispatch = useAppDispatch();
